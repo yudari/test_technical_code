@@ -1,87 +1,88 @@
 from flask import Flask, jsonify, request
 
-class BilanganOperasiController():
+app = Flask(__name__)
+
+class BilanganOperasiController:
     
     @staticmethod
     def createBilanganSegitiga():
-        body_input =request.form
+        body_input = request.form
         
         if not body_input:
-            return jsonify({'status_code': 404, 'message': "Maaf ada error pada saat proses inputnya"})
+            return jsonify({'status_code': 400, 'message': "Input tidak ditemukan"})
         
         input_bil_value = body_input.get('input_bil')
         
         if not input_bil_value:
-            return jsonify({'status_code': 404, 'message': "Maaf input anda masih kosong"})
-        else:
-            total_huruf = len(input_bil_value)
-            final_bil = ''
-            count_bil = 1
-            # for data in total_huruf:
-            #     if data == "0" :
-            #         num_bil = data + "0"
-            #     else:
-                    
-                 
-            return jsonify({'status_code': 200, 'message': f"Test Memiliki Jumlah Panjang Bilangan Bulat {isinstance(input_bil_value, str)}"})
+            return jsonify({'status_code': 400, 'message': "Input tidak boleh kosong"})
         
+        try:
+     
+            number = int(input_bil_value)
+            
+            def generate_triangle(number):
+                str_num = str(number)
+                length = len(str_num)
+                triangle = []
+                for i in range(1, length + 1):
+                    current_digit = str_num[i-1]
+                    triangle.append(current_digit + '0' * (i-1))
+                return triangle
+            
+            result = generate_triangle(number)
+            
+            return jsonify({'status_code': 200, 'message': "Berhasil", 'result': result})
         
-    staticmethod
+        except ValueError:
+            return jsonify({'status_code': 400, 'message': "Input harus berupa angka yang valid."})
+    
+    @staticmethod
     def createBilanganGanjil():
-        body_input =request.form
+        body_input = request.form
         
         if not body_input:
-            return jsonify({'status_code': 404, 'message': "Maaf ada error pada saat proses inputnya"})
+            return jsonify({'status_code': 400, 'message': "Input tidak ditemukan"})
         
         input_bil_value = body_input.get('input_bil')
         
         if not input_bil_value:
-            return jsonify({'status_code': 404, 'message': "Maaf input anda masih kosong"})
-        else:
-            bil_len = input_bil_value
-            bil_arr = []
-            bil_ganjil = []
-            for data in range(0, int(bil_len) + 1):
-                bil_arr.append(data)
-            
-            for data2 in bil_arr:
-                # if data2 % 2 == 1:
-                bilangan_found = 0
-                if data2 % 2 == 1:
-                    bilangan_found = data2
-                    
-                if bilangan_found != 0:
-                    bil_ganjil.append(bilangan_found)
-    
-            
-            return jsonify({'status_code': 200, 'message': f"Test Memiliki bilangan ganjil {bil_ganjil}"})
+            return jsonify({'status_code': 400, 'message': "Input tidak boleh kosong"})
         
-    staticmethod
-    def createBilanganGenap():
-        body_input =request.form
+        try:
+            bil_len = int(input_bil_value)
+            bil_ganjil = [num for num in range(bil_len + 1) if num % 2 != 0]
+            
+            return jsonify({'status_code': 200, 'message': f"Berhasil", 'result': bil_ganjil})
+        
+        except ValueError:
+            return jsonify({'status_code': 400, 'message': "Input harus berupa angka yang valid."})
+    
+    @staticmethod
+    def createBilanganPrima():
+        body_input = request.form
         
         if not body_input:
-            return jsonify({'status_code': 404, 'message': "Maaf ada error pada saat proses inputnya"})
+            return jsonify({'status_code': 400, 'message': "Input tidak ditemukan"})
         
         input_bil_value = body_input.get('input_bil')
         
         if not input_bil_value:
-            return jsonify({'status_code': 404, 'message': "Maaf input anda masih kosong"})
-        else:
-            bil_len = input_bil_value
-            bil_arr = []
-            bil_genap = []
-            for data in range(0, int(bil_len) + 1):
-                bil_arr.append(data)
+            return jsonify({'status_code': 400, 'message': "Input tidak boleh kosong"})
+        
+        try:
+            bil_len = int(input_bil_value)
+            bil_prima_arr = [num for num in range(2, bil_len + 1) if BilanganOperasiController.is_bil_prima(num)]
             
-            for data2 in bil_arr:
-                # if data2 % 2 == 1:
-                bilangan_found = 0
-                if data2 % 2 == 0:
-                    bilangan_found = data2
-                    
-                if bilangan_found != 0:
-                    bil_genap.append(bilangan_found)
+            return jsonify({'status_code': 200, 'message': f"Berhasil", 'result': bil_prima_arr})
+        
+        except ValueError:
+            return jsonify({'status_code': 400, 'message': "Input harus berupa angka yang valid."})
     
-            
-            return jsonify({'status_code': 200, 'message': f"Test Memiliki bilangan ganjil {bil_genap}"})
+    @staticmethod
+    def is_bil_prima(angka):
+        if angka < 2:
+            return False
+        for data in range(2, int(angka ** 0.5) + 1):
+            if angka % data == 0:
+                return False
+        return True
